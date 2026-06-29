@@ -1,11 +1,233 @@
 ---
-import Welcome from '../components/Welcome.astro';
 import Layout from '../layouts/Layout.astro';
+import { fetchItems, assetUrl } from '../lib/directus';
 
-// Welcome to Astro! Wondering what to do next? Check out the Astro documentation at https://docs.astro.build
-// Don't want to use any of this? Delete everything in this file, the `assets`, `components`, and `layouts` directories, and start fresh.
+const [comercios, categorias] = await Promise.all([
+  fetchItems('Comercios', '?filter[estado][_eq]=activo'),
+  fetchItems('Categorias', '?sort=nombre'),
+]);
+
+const destacados = comercios.slice(0, 4);
+const conLogo    = comercios.filter((c: any) => c.logo);
+
+const svgIcons = [
+  `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M15.75 10.5V6a3.75 3.75 0 10-7.5 0v4.5m11.356-1.993l1.263 12c.07.665-.45 1.243-1.119 1.243H4.25a1.125 1.125 0 01-1.12-1.243l1.264-12A1.125 1.125 0 015.513 7.5h12.974c.576 0 1.059.435 1.119 1.007z"/></svg>`,
+  `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M9.568 3H5.25A2.25 2.25 0 003 5.25v4.318c0 .597.237 1.17.659 1.591l9.581 9.581c.699.699 1.78.872 2.607.33a18.095 18.095 0 005.223-5.223c.542-.827.369-1.908-.33-2.607L11.16 3.66A2.25 2.25 0 009.568 3z"/><path d="M6 6h.008v.008H6V6z"/></svg>`,
+  `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M11.48 3.499a.562.562 0 011.04 0l2.125 5.111a.563.563 0 00.475.345l5.518.442c.499.04.701.663.321.988l-4.204 3.602a.563.563 0 00-.182.557l1.285 5.385a.562.562 0 01-.84.61l-4.725-2.885a.563.563 0 00-.586 0L6.982 20.54a.562.562 0 01-.84-.61l1.285-5.386a.562.562 0 00-.182-.557l-4.204-3.602a.563.563 0 01.321-.988l5.518-.442a.563.563 0 00.475-.345L11.48 3.5z"/></svg>`,
+  `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20.25 7.5l-.625 10.632a2.25 2.25 0 01-2.247 2.118H6.622a2.25 2.25 0 01-2.247-2.118L3.75 7.5M10 11.25h4M3.375 7.5h17.25c.621 0 1.125-.504 1.125-1.125v-1.5c0-.621-.504-1.125-1.125-1.125H3.375c-.621 0-1.125.504-1.125 1.125v1.5c0 .621.504 1.125 1.125 1.125z"/></svg>`,
+  `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M15 10.5a3 3 0 11-6 0 3 3 0 016 0z"/><path d="M19.5 10.5c0 7.142-7.5 11.25-7.5 11.25S4.5 17.642 4.5 10.5a7.5 7.5 0 1115 0z"/></svg>`,
+  `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M9.813 15.904L9 18.75l-.813-2.846a4.5 4.5 0 00-3.09-3.09L2.25 12l2.846-.813a4.5 4.5 0 003.09-3.09L9 5.25l.813 2.846a4.5 4.5 0 003.09 3.09L15.75 12l-2.846.813a4.5 4.5 0 00-3.09 3.09z"/></svg>`,
+  `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733-.715-1.607-2.377-2.733-4.313-2.733C5.1 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12z"/></svg>`,
+  `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v2.25m6.364.386l-1.591 1.591M21 12h-2.25m-.386 6.364l-1.591-1.591M12 18.75V21m-4.773-4.227l-1.591 1.591M5.25 12H3m4.227-4.773L5.636 5.636M15.75 12a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0z"/></svg>`,
+];
 ---
+<Layout title="Tupac Amaru I — Marketplace">
 
-<Layout>
-	<Welcome />
+  <!-- Nav -->
+  <nav class="sticky top-0 z-50 bg-zinc-950/80 backdrop-blur-xl border-b border-white/5">
+    <div class="max-w-screen-xl mx-auto px-8 py-4 flex items-center justify-between">
+      <span class="font-extrabold text-base tracking-tight text-white">
+        Tupac Amaru<span class="text-indigo-400"> I</span>
+      </span>
+      <div class="flex items-center gap-1">
+        <a href="/" class="text-xs font-semibold text-white bg-white/10 px-4 py-2 rounded-lg">Inicio</a>
+        <a href="/tiendas" class="text-xs font-medium text-zinc-400 hover:text-white hover:bg-white/5 px-4 py-2 rounded-lg transition-colors">Tiendas</a>
+      </div>
+    </div>
+  </nav>
+
+  <!-- ── HERO ─────────────────────────────────────────────────────── -->
+  <section class="relative min-h-[88vh] flex flex-col items-center justify-center overflow-hidden px-8 text-center">
+
+    <!-- Gradient orbs -->
+    <div class="absolute top-[-10%] left-[10%] w-[500px] h-[500px] rounded-full pointer-events-none"
+      style="background: radial-gradient(circle, rgba(99,102,241,0.2) 0%, transparent 70%); filter: blur(50px);"></div>
+    <div class="absolute bottom-[5%] right-[5%] w-[400px] h-[400px] rounded-full pointer-events-none"
+      style="background: radial-gradient(circle, rgba(139,92,246,0.16) 0%, transparent 70%); filter: blur(50px);"></div>
+    <div class="absolute top-[40%] right-[20%] w-[300px] h-[300px] rounded-full pointer-events-none"
+      style="background: radial-gradient(circle, rgba(59,130,246,0.1) 0%, transparent 70%); filter: blur(40px);"></div>
+
+    <!-- Dot grid -->
+    <div class="absolute inset-0 pointer-events-none"
+      style="background-image: radial-gradient(rgba(255,255,255,0.035) 1px, transparent 1px); background-size: 28px 28px;"></div>
+
+    <div class="relative z-10 max-w-3xl mx-auto">
+
+      <!-- Badge -->
+      <div class="inline-flex items-center gap-2 mb-8 px-4 py-1.5 rounded-full border border-white/10 bg-white/5 text-xs text-zinc-400 font-medium">
+        <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
+        Mercadillo · Tacna, Perú
+      </div>
+
+      <!-- Title -->
+      <h1 class="text-6xl sm:text-7xl lg:text-8xl font-extrabold tracking-tight leading-[1.1] mb-6">
+        <span class="text-white">Encuentra todo,</span><br/>
+        <span style="background: linear-gradient(135deg, #818cf8 0%, #a78bfa 50%, #c084fc 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;">cerca de ti</span>
+      </h1>
+
+      <p class="text-zinc-400 text-lg max-w-xl mx-auto mb-10 leading-relaxed">
+        Todo lo que necesitas en un solo lugar — tiendas, productos y servicios del Mercadillo Tupac Amaru I.
+      </p>
+
+      <!-- CTAs -->
+      <div class="flex items-center justify-center gap-3 flex-wrap">
+        <a href="/tiendas"
+          class="inline-flex items-center gap-2 font-semibold text-sm px-6 py-3.5 rounded-xl text-white transition-all duration-200 hover:opacity-90 hover:scale-105"
+          style="background: linear-gradient(135deg, #6366f1, #8b5cf6);">
+          Ver todas las tiendas
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M17 8l4 4m0 0l-4 4m4-4H3"/>
+          </svg>
+        </a>
+        <a href="#destacados"
+          class="inline-flex items-center gap-2 font-medium text-sm px-6 py-3.5 rounded-xl text-zinc-300 border border-white/10 hover:border-white/20 hover:text-white bg-white/5 hover:bg-white/8 transition-all duration-200">
+          Tiendas destacadas
+        </a>
+      </div>
+
+      <!-- Stats -->
+      <div class="inline-flex items-center gap-0 mt-16 rounded-2xl border border-white/8 bg-white/3 overflow-hidden">
+        <div class="px-8 py-4 text-center border-r border-white/8">
+          <p class="text-3xl font-extrabold text-white">+100</p>
+          <p class="text-zinc-600 text-xs mt-1 uppercase tracking-widest">Negocios</p>
+        </div>
+        <div class="px-8 py-4 text-center border-r border-white/8">
+          <p class="text-3xl font-extrabold text-white">+1000</p>
+          <p class="text-zinc-600 text-xs mt-1 uppercase tracking-widest">Productos</p>
+        </div>
+        <div class="px-8 py-4 text-center">
+          <p class="text-3xl font-extrabold text-white">Tacna</p>
+          <p class="text-zinc-600 text-xs mt-1 uppercase tracking-widest">Perú</p>
+        </div>
+      </div>
+
+      <!-- Marquee de marcas -->
+      <div class="mt-14 w-full">
+        <p class="text-zinc-600 text-xs uppercase tracking-widest mb-6">Negocios en el directorio</p>
+        <div class="relative overflow-hidden">
+          <div class="absolute left-0 top-0 bottom-0 w-32 z-10 pointer-events-none"
+            style="background: linear-gradient(to right, #09090b 30%, transparent);"></div>
+          <div class="absolute right-0 top-0 bottom-0 w-32 z-10 pointer-events-none"
+            style="background: linear-gradient(to left, #09090b 30%, transparent);"></div>
+          <div class="flex marquee-track">
+            {[...comercios, ...comercios].map((c: any) => {
+              const logo = assetUrl(c.logo);
+              return (
+                <div class="flex-shrink-0 mx-8 flex items-center gap-2.5 opacity-40 hover:opacity-70 transition-opacity duration-200">
+                  {logo
+                    ? <img src={logo} alt={c.nombre} class="h-5 w-5 object-contain grayscale" />
+                    : <span class="h-5 w-5 rounded text-[10px] font-bold flex items-center justify-center bg-zinc-700 text-zinc-400">{c.nombre.charAt(0)}</span>
+                  }
+                  <span class="text-zinc-300 text-sm font-semibold whitespace-nowrap tracking-tight">{c.nombre}</span>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ── TIENDAS DESTACADAS ────────────────────────────────────────── -->
+  <section id="destacados" class="max-w-screen-xl mx-auto px-8 py-20">
+    <div class="flex items-end justify-between mb-10">
+      <div>
+        <p class="text-indigo-400 text-xs font-semibold uppercase tracking-widest mb-2">Destacados</p>
+        <h2 class="text-2xl font-extrabold text-white">Tiendas que no te puedes perder</h2>
+      </div>
+      <a href="/tiendas" class="text-xs text-zinc-500 hover:text-zinc-300 transition-colors flex items-center gap-1">
+        Ver todas
+        <svg class="w-3 h-3" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"/>
+        </svg>
+      </a>
+    </div>
+
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+      {destacados.map((c: any) => {
+        const logo = assetUrl(c.logo);
+        return (
+          <a href="/tiendas"
+            class="group flex flex-col bg-zinc-900 border border-white/6 hover:border-indigo-500/30 rounded-2xl overflow-hidden transition-all duration-200 hover:-translate-y-1">
+
+            <!-- Logo area -->
+            <div class="h-36 bg-zinc-800/60 flex items-center justify-center relative overflow-hidden">
+              <div class="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300"
+                style="background: radial-gradient(circle at 50% 50%, rgba(99,102,241,0.15) 0%, transparent 70%);"></div>
+              {logo
+                ? <img src={logo} alt={c.nombre} class="h-20 w-20 object-contain relative z-10" />
+                : <span class="text-4xl font-extrabold text-zinc-600 relative z-10">{c.nombre.charAt(0)}</span>
+              }
+            </div>
+
+            <!-- Info -->
+            <div class="p-4 flex flex-col gap-1">
+              <h3 class="font-bold text-zinc-100 text-sm truncate">{c.nombre}</h3>
+              <p class="text-zinc-600 text-xs line-clamp-2 leading-relaxed">{c.descripcion ?? 'Visita nuestra tienda en el mercadillo.'}</p>
+              <span class="mt-2 text-indigo-400 text-xs font-medium group-hover:text-indigo-300 transition-colors">
+                Ver tienda →
+              </span>
+            </div>
+          </a>
+        );
+      })}
+    </div>
+  </section>
+
+  <!-- Divider -->
+  <div class="w-full h-px bg-gradient-to-r from-transparent via-white/10 to-transparent"></div>
+
+  <!-- ── CATEGORÍAS ────────────────────────────────────────────────── -->
+  <section id="categorias" class="max-w-screen-xl mx-auto px-8 py-20">
+    <div class="mb-12">
+      <p class="text-indigo-400 text-xs font-semibold uppercase tracking-widest mb-2">Categorías</p>
+      <h2 class="text-2xl font-extrabold text-white">Explora por rubro</h2>
+    </div>
+
+    <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-4">
+      {categorias.map((cat: any, i: number) => (
+        <a href={`/tiendas?cat=${cat.id}`}
+          class="group relative flex flex-col items-center gap-4 rounded-2xl p-6 text-center border border-white/8 bg-white/3 hover:bg-white/6 hover:border-indigo-500/30 transition-all duration-200 overflow-hidden">
+          <div class="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none"
+            style="background: radial-gradient(circle at 50% 0%, rgba(99,102,241,0.12) 0%, transparent 70%);"></div>
+          <div class="relative w-12 h-12 rounded-xl flex items-center justify-center text-indigo-400 group-hover:text-indigo-300 transition-colors"
+            style="background: linear-gradient(135deg, rgba(99,102,241,0.15), rgba(139,92,246,0.1)); border: 1px solid rgba(99,102,241,0.2);">
+            <span class="w-5 h-5" set:html={svgIcons[i % svgIcons.length]} />
+          </div>
+          <span class="text-zinc-400 text-xs font-medium leading-tight group-hover:text-zinc-200 transition-colors">
+            {cat.nombre}
+          </span>
+        </a>
+      ))}
+    </div>
+  </section>
+
+  <!-- ── CTA final ─────────────────────────────────────────────────── -->
+  <section class="max-w-screen-xl mx-auto px-8 pb-20">
+    <div class="relative rounded-3xl overflow-hidden p-12 text-center border border-white/8"
+      style="background: linear-gradient(135deg, rgba(99,102,241,0.12) 0%, rgba(139,92,246,0.08) 50%, rgba(99,102,241,0.06) 100%);">
+      <div class="absolute inset-0 pointer-events-none"
+        style="background-image: radial-gradient(rgba(255,255,255,0.03) 1px, transparent 1px); background-size: 20px 20px;"></div>
+      <p class="relative text-zinc-400 text-sm mb-2">¿Buscas algo específico?</p>
+      <h3 class="relative text-2xl font-extrabold text-white mb-6">Encuentra lo que necesitas entre {comercios.length} negocios</h3>
+      <a href="/tiendas"
+        class="inline-flex items-center gap-2 font-semibold text-sm px-7 py-3.5 rounded-xl text-white hover:opacity-90 transition-opacity"
+        style="background: linear-gradient(135deg, #6366f1, #8b5cf6);">
+        Ir al directorio completo
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M17 8l4 4m0 0l-4 4m4-4H3"/>
+        </svg>
+      </a>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <div class="w-full h-px bg-gradient-to-r from-transparent via-white/8 to-transparent"></div>
+  <footer class="py-12 text-center">
+    <p class="text-zinc-500 text-sm font-semibold">Tupac Amaru I</p>
+    <p class="text-zinc-700 text-xs mt-1">Av. Pinto con Av. Coronel Mendoza · Tacna, Perú</p>
+    <p class="text-zinc-800 text-xs mt-6">© 2025 Tupac Amaru I</p>
+  </footer>
+
 </Layout>

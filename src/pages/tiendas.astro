@@ -1,0 +1,138 @@
+---
+import Layout from '../layouts/Layout.astro';
+import { fetchItems, assetUrl } from '../lib/directus';
+
+const [comercios, productos, categorias] = await Promise.all([
+  fetchItems('Comercios', '?filter[estado][_eq]=activo&sort=nombre'),
+  fetchItems('Productos', '?filter[estado][_eq]=activo&fields=*,categoria.id,categoria.nombre&sort=nombre'),
+  fetchItems('Categorias', '?sort=nombre'),
+]);
+
+const porComercio: Record<number, any[]> = {};
+for (const p of productos) {
+  if (!porComercio[p.comercio]) porComercio[p.comercio] = [];
+  porComercio[p.comercio].push(p);
+}
+---
+<Layout title="Tiendas — Tupac Amaru I">
+
+  <!-- Nav -->
+  <nav class="sticky top-0 z-50 bg-zinc-950/90 backdrop-blur-md border-b border-zinc-800/50">
+    <div class="max-w-screen-2xl mx-auto px-8 py-4 flex items-center justify-between">
+      <a href="/" class="text-zinc-100 font-extrabold text-lg tracking-tight">
+        Tupac Amaru <span class="text-indigo-400">I</span>
+      </a>
+      <div class="flex items-center gap-6 text-sm">
+        <a href="/" class="text-zinc-500 hover:text-zinc-100 transition-colors">Inicio</a>
+        <a href="/tiendas" class="text-zinc-100 font-semibold">Tiendas</a>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Page header -->
+  <div class="max-w-screen-2xl mx-auto px-8 pt-10 pb-6 border-b border-zinc-800/50">
+    <h1 class="text-3xl font-extrabold text-zinc-50">Tiendas</h1>
+    <p class="text-zinc-500 text-sm mt-1">{comercios.length} negocios disponibles · Tacna, Perú</p>
+  </div>
+
+  <!-- Filtros -->
+  <div class="max-w-screen-2xl mx-auto px-8 py-5 flex gap-3 flex-col sm:flex-row">
+    <input
+      id="search"
+      type="text"
+      placeholder="Buscar negocio..."
+      class="flex-1 bg-zinc-900 border border-zinc-800 hover:border-zinc-700 focus:border-indigo-500/60 rounded-xl px-4 py-2.5 text-sm text-zinc-200 placeholder-zinc-600 outline-none transition-colors"
+    />
+    <select
+      id="cat-select"
+      class="sm:w-52 bg-zinc-900 border border-zinc-800 hover:border-zinc-700 focus:border-indigo-500/60 rounded-xl px-4 py-2.5 text-sm text-zinc-400 outline-none transition-colors cursor-pointer"
+    >
+      <option value="todos">Todas las categorías</option>
+      {categorias.map((cat: any) => (
+        <option value={String(cat.id)}>{cat.nombre}</option>
+      ))}
+    </select>
+  </div>
+
+  <!-- Grid -->
+  <section class="max-w-screen-2xl mx-auto px-8 pb-16">
+    <div class="flex items-center justify-between mb-4">
+      <span id="count" class="text-zinc-600 text-xs">{comercios.length} resultados</span>
+    </div>
+
+    <div id="grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+      {comercios.map((c: any, i: number) => {
+        const prods = porComercio[c.id] || [];
+        const catIds = [...new Set(prods.map((p: any) => p.categoria?.id).filter(Boolean))];
+        const logoUrl = assetUrl(c.logo);
+        return (
+          <article
+            class="comercio-card flex flex-row items-center bg-zinc-900 border border-zinc-800 rounded-2xl hover:border-zinc-700 hover:bg-zinc-800/60 transition-all duration-200 cursor-pointer overflow-hidden"
+            data-nombre={c.nombre.toLowerCase()}
+            data-desc={(c.descripcion ?? '').toLowerCase()}
+            data-cats={JSON.stringify(catIds)}
+          >
+            <div class="w-40 h-40 shrink-0 bg-zinc-800 border-r border-zinc-700/40 flex items-center justify-center overflow-hidden">
+              {logoUrl
+                ? <img src={logoUrl} alt={c.nombre} class="w-full h-full object-contain p-5" />
+                : <span class="text-4xl font-extrabold text-zinc-600">{c.nombre.charAt(0)}</span>
+              }
+            </div>
+            <div class="flex-1 min-w-0 px-5 py-5">
+              <h3 class="font-bold text-zinc-100 text-base mb-2 truncate">{c.nombre}</h3>
+              <p class="text-zinc-500 text-sm leading-relaxed line-clamp-3 mb-3">{c.descripcion}</p>
+              <div class="flex items-center gap-1.5 text-zinc-600 text-xs">
+                <svg class="w-3.5 h-3.5 shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/>
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/>
+                </svg>
+                <span class="truncate">{c.direccion ?? 'Mercadillo Tupac Amaru I'}</span>
+              </div>
+            </div>
+          </article>
+        );
+      })}
+    </div>
+
+    <div id="empty" class="hidden text-center py-20">
+      <p class="text-zinc-600 text-sm">No se encontraron negocios</p>
+    </div>
+  </section>
+
+  <footer class="border-t border-zinc-800/50 py-8 text-center">
+    <p class="text-zinc-500 text-sm font-semibold">Tupac Amaru I</p>
+    <p class="text-zinc-700 text-xs mt-1">Av. Pinto con Av. Coronel Mendoza · Tacna, Perú</p>
+  </footer>
+
+</Layout>
+
+<script>
+  const searchEl  = document.getElementById('search') as HTMLInputElement;
+  const catSelect = document.getElementById('cat-select') as HTMLSelectElement;
+  const countEl   = document.getElementById('count')!;
+  const emptyEl   = document.getElementById('empty')!;
+  const cards     = document.querySelectorAll<HTMLElement>('.comercio-card');
+
+  const params = new URLSearchParams(window.location.search);
+  const catParam = params.get('cat');
+  if (catParam) catSelect.value = catParam;
+
+  searchEl.addEventListener('input', filter);
+  catSelect.addEventListener('change', filter);
+  if (catParam) filter();
+
+  function filter() {
+    const q = searchEl.value.toLowerCase().trim();
+    const cat = catSelect.value;
+    let visible = 0;
+    cards.forEach(card => {
+      const match =
+        (!q || card.dataset.nombre!.includes(q) || card.dataset.desc!.includes(q)) &&
+        (cat === 'todos' || (JSON.parse(card.dataset.cats!) as number[]).includes(Number(cat)));
+      card.style.display = match ? '' : 'none';
+      if (match) visible++;
+    });
+    countEl.textContent = `${visible} resultados`;
+    emptyEl.classList.toggle('hidden', visible > 0);
+  }
+</script>
