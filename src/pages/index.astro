@@ -25,19 +25,19 @@ const svgIcons = [
 
   <!-- Nav -->
   <nav class="sticky top-0 z-50 bg-zinc-950/80 backdrop-blur-xl border-b border-white/5">
-    <div class="max-w-screen-xl mx-auto px-8 py-4 flex items-center justify-between">
+    <div class="max-w-screen-xl mx-auto px-4 sm:px-8 py-4 flex items-center justify-between">
       <span class="font-extrabold text-base tracking-tight text-white">
         Tupac Amaru<span class="text-indigo-400"> I</span>
       </span>
       <div class="flex items-center gap-1">
-        <a href="/" class="text-xs font-semibold text-white bg-white/10 px-4 py-2 rounded-lg">Inicio</a>
-        <a href="/tiendas" class="text-xs font-medium text-zinc-400 hover:text-white hover:bg-white/5 px-4 py-2 rounded-lg transition-colors">Tiendas</a>
+        <a href="/" class="text-xs font-semibold text-white bg-white/10 px-3 sm:px-4 py-2 rounded-lg">Inicio</a>
+        <a href="/tiendas" class="text-xs font-medium text-zinc-400 hover:text-white hover:bg-white/5 px-3 sm:px-4 py-2 rounded-lg transition-colors">Tiendas</a>
       </div>
     </div>
   </nav>
 
   <!-- ── HERO ─────────────────────────────────────────────────────── -->
-  <section class="relative min-h-[88vh] flex flex-col items-center justify-center overflow-hidden px-8 text-center">
+  <section class="relative min-h-[88vh] flex flex-col items-center justify-center overflow-hidden px-4 sm:px-8 text-center">
 
     <!-- Gradient orbs -->
     <div class="absolute top-[-10%] left-[10%] w-[500px] h-[500px] rounded-full pointer-events-none"
@@ -51,7 +51,7 @@ const svgIcons = [
     <div class="absolute inset-0 pointer-events-none"
       style="background-image: radial-gradient(rgba(255,255,255,0.035) 1px, transparent 1px); background-size: 28px 28px;"></div>
 
-    <div class="relative z-10 max-w-3xl mx-auto">
+    <div class="relative z-10 max-w-3xl mx-auto w-full">
 
       <!-- Badge -->
       <div class="inline-flex items-center gap-2 mb-8 px-4 py-1.5 rounded-full border border-white/10 bg-white/5 text-xs text-zinc-400 font-medium">
@@ -60,7 +60,7 @@ const svgIcons = [
       </div>
 
       <!-- Title -->
-      <h1 class="text-6xl sm:text-7xl lg:text-8xl font-extrabold tracking-tight leading-[1.1] mb-6">
+      <h1 class="text-4xl sm:text-6xl lg:text-8xl font-extrabold tracking-tight leading-[1.1] mb-6">
         <span class="text-white">Encuentra todo,</span><br/>
         <span style="background: linear-gradient(135deg, #818cf8 0%, #a78bfa 50%, #c084fc 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;">cerca de ti</span>
       </h1>
@@ -86,17 +86,17 @@ const svgIcons = [
       </div>
 
       <!-- Stats -->
-      <div class="inline-flex items-center gap-0 mt-16 rounded-2xl border border-white/8 bg-white/3 overflow-hidden">
-        <div class="px-8 py-4 text-center border-r border-white/8">
-          <p class="text-3xl font-extrabold text-white">+100</p>
+      <div class="flex w-full sm:inline-flex items-center gap-0 mt-16 rounded-2xl border border-white/8 bg-white/3 overflow-hidden">
+        <div class="flex-1 px-4 sm:px-8 py-4 text-center border-r border-white/8">
+          <p class="text-2xl sm:text-3xl font-extrabold text-white">+100</p>
           <p class="text-zinc-600 text-xs mt-1 uppercase tracking-widest">Negocios</p>
         </div>
-        <div class="px-8 py-4 text-center border-r border-white/8">
-          <p class="text-3xl font-extrabold text-white">+1000</p>
+        <div class="flex-1 px-4 sm:px-8 py-4 text-center border-r border-white/8">
+          <p class="text-2xl sm:text-3xl font-extrabold text-white">+1000</p>
           <p class="text-zinc-600 text-xs mt-1 uppercase tracking-widest">Productos</p>
         </div>
-        <div class="px-8 py-4 text-center">
-          <p class="text-3xl font-extrabold text-white">Tacna</p>
+        <div class="flex-1 px-4 sm:px-8 py-4 text-center">
+          <p class="text-2xl sm:text-3xl font-extrabold text-white">Tacna</p>
           <p class="text-zinc-600 text-xs mt-1 uppercase tracking-widest">Perú</p>
         </div>
       </div>
@@ -130,7 +130,7 @@ const svgIcons = [
   </section>
 
   <!-- ── TIENDAS DESTACADAS ────────────────────────────────────────── -->
-  <section id="destacados" class="max-w-screen-xl mx-auto px-8 py-20">
+  <section id="destacados" class="max-w-screen-xl mx-auto px-4 sm:px-8 py-20">
     <div class="flex items-end justify-between mb-10">
       <div>
         <p class="text-indigo-400 text-xs font-semibold uppercase tracking-widest mb-2">Destacados</p>
@@ -179,7 +179,7 @@ const svgIcons = [
   <div class="w-full h-px bg-gradient-to-r from-transparent via-white/10 to-transparent"></div>
 
   <!-- ── CATEGORÍAS ────────────────────────────────────────────────── -->
-  <section id="categorias" class="max-w-screen-xl mx-auto px-8 py-20">
+  <section id="categorias" class="max-w-screen-xl mx-auto px-4 sm:px-8 py-20">
     <div class="mb-12">
       <p class="text-indigo-400 text-xs font-semibold uppercase tracking-widest mb-2">Categorías</p>
       <h2 class="text-2xl font-extrabold text-white">Explora por rubro</h2>
@@ -204,8 +204,8 @@ const svgIcons = [
   </section>
 
   <!-- ── CTA final ─────────────────────────────────────────────────── -->
-  <section class="max-w-screen-xl mx-auto px-8 pb-20">
-    <div class="relative rounded-3xl overflow-hidden p-12 text-center border border-white/8"
+  <section class="max-w-screen-xl mx-auto px-4 sm:px-8 pb-20">
+    <div class="relative rounded-3xl overflow-hidden p-6 sm:p-12 text-center border border-white/8"
       style="background: linear-gradient(135deg, rgba(99,102,241,0.12) 0%, rgba(139,92,246,0.08) 50%, rgba(99,102,241,0.06) 100%);">
       <div class="absolute inset-0 pointer-events-none"
         style="background-image: radial-gradient(rgba(255,255,255,0.03) 1px, transparent 1px); background-size: 20px 20px;"></div>

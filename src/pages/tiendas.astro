@@ -18,7 +18,7 @@ for (const p of productos) {
 
   <!-- Nav -->
   <nav class="sticky top-0 z-50 bg-zinc-950/90 backdrop-blur-md border-b border-zinc-800/50">
-    <div class="max-w-screen-2xl mx-auto px-8 py-4 flex items-center justify-between">
+    <div class="max-w-screen-2xl mx-auto px-4 sm:px-8 py-4 flex items-center justify-between">
       <a href="/" class="text-zinc-100 font-extrabold text-lg tracking-tight">
         Tupac Amaru <span class="text-indigo-400">I</span>
       </a>
@@ -30,13 +30,13 @@ for (const p of productos) {
   </nav>
 
   <!-- Page header -->
-  <div class="max-w-screen-2xl mx-auto px-8 pt-10 pb-6 border-b border-zinc-800/50">
+  <div class="max-w-screen-2xl mx-auto px-4 sm:px-8 pt-10 pb-6 border-b border-zinc-800/50">
     <h1 class="text-3xl font-extrabold text-zinc-50">Tiendas</h1>
     <p class="text-zinc-500 text-sm mt-1">{comercios.length} negocios disponibles · Tacna, Perú</p>
   </div>
 
   <!-- Filtros -->
-  <div class="max-w-screen-2xl mx-auto px-8 py-5 flex gap-3 flex-col sm:flex-row">
+  <div class="max-w-screen-2xl mx-auto px-4 sm:px-8 py-5 flex gap-3 flex-col sm:flex-row">
     <input
       id="search"
       type="text"
@@ -55,7 +55,7 @@ for (const p of productos) {
   </div>
 
   <!-- Grid -->
-  <section class="max-w-screen-2xl mx-auto px-8 pb-16">
+  <section class="max-w-screen-2xl mx-auto px-4 sm:px-8 pb-16">
     <div class="flex items-center justify-between mb-4">
       <span id="count" class="text-zinc-600 text-xs">{comercios.length} resultados</span>
     </div>
@@ -67,18 +67,18 @@ for (const p of productos) {
         const logoUrl = assetUrl(c.logo);
         return (
           <article
-            class="comercio-card flex flex-row items-center bg-zinc-900 border border-zinc-800 rounded-2xl hover:border-zinc-700 hover:bg-zinc-800/60 transition-all duration-200 cursor-pointer overflow-hidden"
+            class="comercio-card flex flex-col sm:flex-row items-center bg-zinc-900 border border-zinc-800 rounded-2xl hover:border-zinc-700 hover:bg-zinc-800/60 transition-all duration-200 cursor-pointer overflow-hidden"
             data-nombre={c.nombre.toLowerCase()}
             data-desc={(c.descripcion ?? '').toLowerCase()}
             data-cats={JSON.stringify(catIds)}
           >
-            <div class="w-40 h-40 shrink-0 bg-zinc-800 border-r border-zinc-700/40 flex items-center justify-center overflow-hidden">
+            <div class="w-full h-36 sm:w-40 sm:h-40 shrink-0 bg-zinc-800 border-b sm:border-b-0 sm:border-r border-zinc-700/40 flex items-center justify-center overflow-hidden">
               {logoUrl
                 ? <img src={logoUrl} alt={c.nombre} class="w-full h-full object-contain p-5" />
                 : <span class="text-4xl font-extrabold text-zinc-600">{c.nombre.charAt(0)}</span>
               }
             </div>
-            <div class="flex-1 min-w-0 px-5 py-5">
+            <div class="flex-1 min-w-0 px-5 py-5 w-full">
               <h3 class="font-bold text-zinc-100 text-base mb-2 truncate">{c.nombre}</h3>
               <p class="text-zinc-500 text-sm leading-relaxed line-clamp-3 mb-3">{c.descripcion}</p>
               <div class="flex items-center gap-1.5 text-zinc-600 text-xs">
